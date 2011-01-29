@@ -1,0 +1,3 @@
+As part of a project, I created a "guided tour" of the Windows Driver Model for students to learn more about the Windows XP I/O System and how the Windows Driver Model (WDM) fits into that architecture. It was goal that this guide would explain the XP I/O Subsystem, show how device drivers work in the real world, provide annotated examples of WDM filter drivers that work with mouse devices, demonstrate how to debug device driver problems, provide further references for readers who want even more information, and get me a good grade ;).
+
+        ![Screenshot](https://github.com/martinb3/windows_driver_model_tutorial/raw/master/wdm.gif)
