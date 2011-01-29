@@ -1,0 +1,42 @@
+<HTML>
+<head>
+<title>Windows XP &amp; the Windows Driver Model - Index to
+Provided Samples &amp; Sources</title>
+</head>
+ <BODY>
+<H1>Index to Provided Samples &amp; Sources</H1>
+<HR>
+
+<p><IMG SRC="/icons/folder.gif" ALT="[DIR]">
+<A HREF="helloworld/">helloworld/</A> - This example driver is not
+associated with a stack and handles no data; it contains no I/O
+handling and simple prints messages to the kernel debug print buffer.</p>
+
+<p><IMG SRC="/icons/folder.gif" ALT="[DIR]"> <A
+HREF="passthrough/">passthrough/</A> - This is the proof of concept
+that simply passes information through the stack, viewing but not
+modifying any mouse data</p> 
+
+<p><IMG SRC="/icons/folder.gif" ALT="[DIR]">
+<A HREF="invertaxis/">invertaxis/</A> - This example inverts the X and Y
+coordinates of mouse input</p>
+
+<p><IMG SRC="/icons/folder.gif" ALT="[DIR]"> <A
+HREF="scalefast/">scalefast/</A> - This example scales mouse relative
+distances by a factor of 10 on each axis</p>
+
+<p><IMG SRC="/icons/folder.gif" ALT="[DIR]"> <A HREF="unitid/">unitid/</A> 
+- This reports a unique but unused ID of each USB mouse, as enumerated 
+by a lower driver; it demonstrates one method for differentiating
+different mice in the system.</p> 
+
+<p><IMG SRC="/icons/folder.gif" ALT="[DIR]"> <A
+HREF="queryattr/">queryattr/</A> - This demonstrates creating and passing
+a synchronous IRP down to the driver below (and further) and waiting for a
+reply. It queries mouse attribites with an IO Control Code.</p>
+
+<HR>
+Each directory should contain everything you need to build each sample, as
+well as some explanation of what the code does.
+</BODY></HTML>
+

@@ -1,0 +1,41 @@
+Microsoft (R) Windows Debugger  Version 6.4.0007.2
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+
+Loading Dump File [C:\WINDOWS\MEMORY.DMP]
+Kernel Summary Dump File: Only kernel address space is available
+
+Symbol search path is:
+SRV*C:\DK\Symbols\Downstream*http://msdl.microsoft.com/download/symbols
+Executable search path is: 
+Windows XP Kernel Version 2600 (Service Pack 2) UP Free x86 compatible
+Product: WinNt, suite: TerminalServer SingleUserTS
+Built by: 2600.xpsp_sp2_gdr.050301-1519
+Kernel base = 0x804d7000 PsLoadedModuleList = 0x8055a420
+Debug session time: Sat Sep 17 04:01:08.796 2005 (GMT-5)
+System Uptime: 0 days 10:54:42.390
+Loading Kernel Symbols
+.................................................................................................................................................
+Loading unloaded module list
+..................................................
+Loading User Symbols
+*******************************************************************************
+*
+*
+*                        Bugcheck Analysis
+*
+*
+*
+*******************************************************************************
+
+Use !analyze -v to get detailed debugging information.
+
+BugCheck 19, {20, 86604a08, 86605228, b040014}
+
+*** ERROR: Module load completed but symbols could not be loaded for
+naiavf5x.sys
+Probably caused by : naiavf5x.sys ( naiavf5x+1d4e )
+
+Followup: MachineOwner
+---------
+

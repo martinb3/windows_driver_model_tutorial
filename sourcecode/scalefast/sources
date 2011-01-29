@@ -1,0 +1,9 @@
+TARGETNAME=moufiltr
+TARGETPATH=obj
+TARGETTYPE=DRIVER
+
+INCLUDES=.
+
+SOURCES=moufiltr.c \
+        moufiltr.rc
+

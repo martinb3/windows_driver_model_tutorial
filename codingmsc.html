@@ -1,0 +1,114 @@
+<html>
+<head>
+<title>Windows XP &amp; the Windows Driver Model - Coding
+Conventions &amp; Microsoft C</title>
+</head>
+<body>
+<h1>Coding Conventions and Microsoft C</h1>
+<h2>Shared Libraries, DLLs, and Linking</h2>
+Similar to UNIX's shared libraries, the Windows world enjoys the freedom
+of using dynamically linked libraries (DLLs) to allow programs to access
+commonly used functions and runtime support. DLLs, and drivers' .sys files
+by extension, are almost identical to a regular windows executable (.exe)
+image, except that their code is rarely executed outside of some other
+program (see RunDLL32 for the exception). DLLs may be referenced by
+other programs at compile-time or run-time, depending on programmer
+preference; when a DLL is compiled, all functions labeled as exportable
+are added to a table of entry points in a known location of the DLL image.
+Another program simply has to name the DLL and the function it wants to
+run in order to use the DLL.</p>
+<p>
+What's so special about DLLs, then? Some would say the best feature is
+that only one copy of that binary is loaded into memory. Another benefit
+is that even though each DLL may have local variables, those variables are
+local to calling program's stack, so two programs using the same functions
+will have different stack-local variables. One final feature of DLLs
+is that they also may have a 'global' function called DLLMain, which
+is run the first time a DLL is mapped into memory (for performing global
+initialization); there is a matching unload function.</p>
+<h2>Declaring Variables</h2>
+<p>Like the original ANSI C, Microsoft's implementation of C requires
+that variables only be declared directly after entering a new scope
+(the curly braces). Two ways to bypass this rule are 1) start a new scope
+when you want to declare a new variable or 2) package your source code in
+a C++ compilation unit (i.e. use C++ to compile). While there are various
+advantages and disadvantages to both ways, this guide will simply stick
+with the original Microsoft C. Note that if you decide to package your
+source in a C++ compilation unit, extra steps, such as labeling functions
+"extern C" so that the linker recognizes them as exportable, may be
+required.
+</p> 
+<h2>DDK and 'Noise' Words</h2>
+<p>
+It is important to make sense of certain coding styles that are already
+part of the DDK and other Windows driver samples. One major example of
+this is the use of words dubbed 'noise' words. Some examples of noise
+words are <tt>IN, OUT, UNREFERENCED_PARAMETER, PAGED_CODE</tt>.
+<tt>IN</tt> and
+<tt>OUT</tt> are simply 'documentation' in that they are #define'd as
+nothing, but serve the purpose of labeled which parameters are for
+passing-in data to a function and which are for passing-out data. A very
+similar practice occurs with <tt>PAGED_CODE();</tt>. Furthermore,
+<tt>UNREFERENCED_PARAMETER(c)</tt> is used with a variable <tt>c</tt> to
+avoid a compile-time warning about never referencing a function parameter
+variable. Currently, the Windows DDK defines it as a macro:
+"<tt>#define UNREFERENCED_PARAMETER(P) (P)</tt>". 
+</p><p>Lastly, pay special
+attention to the two XP build environments supplied by the DDK. In the 
+Checked Build environment, the <tt>DBG</tt> symbol is defined.
+Defining that symbol maps the KdPrint macro to DbgPrint. Otherwise, in the
+Free Build environment, KdPrint is defined as whitespace. Think about
+the consequences of every driver provider shipping the debug version
+of their driver while you try to debug your own -- only use the free
+build in a production environment. In this guide, we'll use DbgPrint
+so that we can use either build (use the Free Build, the checked
+build has other consequences).</p>
+<p>See ntdef.h for more source-decoration consequences.</p>
+
+<h2>Strings and Unicode</h2> 
+<p>
+
+As Windows evolves, it makes the transition from the ANSI character set to
+Unicode. ANSI maps to the <tt>char</tt> data type, and Unicode maps to the
+<tt>wchar</tt> data type. What follows are some things to know about
+strings in Windows programming (which apply to both Win32 and Kernel
+code). 
+
+</p> 
+<bl>
+<li>There are a bunch of compiler macros that allow the use of generic
+char types that can be compiled as ANSI or Unicode. The best advice is to
+just stick with Unicode fully.</li>
+ <li>When initializing Unicode string variables, use the
+RtlXxxUnicodeString functions for ALL manipulation of string variables.
+All!</li>
+<li>Unicode string literals are preceeded by an L. <tt>L"Hello"</tt>
+is a valid wchar (Unicode) literal.</li>
+<li>The Microsoft C compiler concatenates all string literals placed in a
+series. Thus <tt>L"Hello" L"Student"</tt> is functionally equivalent to
+<tt>L"HelloStudent"</tt>.
+ <li>Don't get fooled into making assumptions about
+how many characters are in a byte; Unicode has codepoints, which are not
+entirely opaque.</li>
+<li>Unicode is often locale specific. Don't be surprised when your driver
+strings don't work in locales where reading is done right to left.</li>
+</bl>
+<h2>Use MSDN Library on CD or Online</h2>
+<p>The Microsoft Developers Network Library is your best resource. It
+is well-maintained, up to date, and historically quite accurate. Also, 
+it has some fun 'easter eggs' that relieve tension during a
+high-stress debugging session. Realize that it documents the Platform
+SDK as well (user-mode) -- make sure you look at what section you're
+reading from, and don't hesitate to browse another section to get an
+idea of what a user-mode program might do when wanting to perform the
+same function you are attempting to perform.</p> 
+<h2>And the fine print about all APIs and system internals</h2>
+<p><b>If it isn't documented, it's subject to change.</b> If examine
+entry points in common system DLLs and drivers, as well as DDK header
+files, you will notice a wealth of other 'internal' and 'undocumented' 
+features in the XP kernel. It is in your best interest not to use any
+of the undocumented functionality because it is subject to change AND
+may require synchronization/mutual exclusion your code cannot provide.</p>
+
+</body>
+</html>

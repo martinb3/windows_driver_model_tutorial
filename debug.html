@@ -1,0 +1,120 @@
+<html>
+<head>
+<title>Windows XP &amp; the Windows Driver Model - Debugging Your
+Driver</title>
+</head>
+<body>
+<h1>Debugging Your Driver</h1>
+<h2>Prerequisites</h2>
+<p>At a minimum, you'll want to be able to use the following tools for
+debugging drivers:</p>
+<ol>
+<li><a
+href="http://www.sysinternals.com/Utilities/DebugView.html">DebugView</a>
+from <a
+href="http://www.sysinternals.com/">http://www.sysinternals.com/</a></li>
+<li><a
+href="http://www.microsoft.com/whdc/devtools/debugging/default.mspx">Debugging
+Tools for Windows</a>, which includes WinDbg, the Kernel
+Debugger</li>
+<li>The Driver Verifier, which comes with the DDK</li>
+<li>Internet Access for the <a
+href="http://www.microsoft.com/whdc/devtools/debugging/debugstart.mspx">Microsoft
+Symbol Server</a> OR the appropriate <a
+href="http://www.microsoft.com/whdc/DevTools/Debugging/symbolpkg.mspx">Windows
+System Package</a> for your Operating System.</li>
+</ol> 
+<h2>Print Statement Method</h2>
+<p>
+The classic debugging technique is simply using print statements to output
+the values of variables where you expect a problem is occuring. You'll
+note that DbgPrint and the other KdPrint macros use printf-style
+string formatting and you may include variables in your debug output.
+You'll want to be especially careful though, and check in MSDN what your
+output data type *should* be, as printf-style formatting may require you
+to specify not just integer, but long integer, unsigned integer, short 
+integer, or some other combination of quantifiers. You may simply run
+the DbgView program to have it read from the kernel debug print
+buffer. If you'd like to see debug print statements in the kernel
+debugger, read on.</p>
+<img src="images/dbgv.gif" alt="Print Statements in Debug View">
+<h2>Enabling Crash Dumps</h2> 
+<p>You'll want to enable crash dumps if you have a driver that causes
+the blue screen of death (i.e. a kernel 'bug check'). There are three
+different styles of memory dumps, and Windows XP always creates a
+minidump, whether you like it or not. The three different types of
+memory dumps are: <ol><li>Small Memory Dump (Minidump)</li><li>Kernel
+Memory Dump</li><li>Complete Memory Dump</li></ol>When your system bug
+checks, it will show you an error message, along with a bugcheck
+'code' that may or may not give some insight into the cause of the
+error. It will also offer a guess (in the form of a file name) as to which
+driver caused the error. If you have any of the memory dumps enabled,
+the system will also dump the requested amount of memory into the system's 
+pagefile. Finally, it will halt the system.</p> 
+<p>You'll need a pagefile at least as large as the memory dump you have
+requested the system to perform. For a complete memory dump, if you have
+1024 mb of RAM, you'll need a pagefile at least a gigabyte in size!
+For the small memory dump, you'll need 64 K (you probably have a
+pagefile at least double this size). For the Kernel memory dump,
+you'll need somewhere in between, depending on how much of the kernel
+is in memory at the time of a crash.</p>
+<p>To enable crash dumps, visit the "System" icon in the Control Panel,
+and click on the Advanced tab. Under "Startup and Recovery," choose
+the "Settings" button. At the bottom of the window, you'll see a drop down
+list where you may select one of the crash dump types, along with
+where to store it. When the system boots after a crash, it will
+extract the dump from the system's pagefile and write it to the
+specified location.</p>
+<img src="images/prop.gif" alt="Enabling Crash Dumps in the System Properties Pane"/>
+ <h2>The Kernel Debugger (WinDbg)</h2>
+<p>While the kernel debugger may seem arcane, it has a very good automated
+system for crash dump analysis. It also now allows you to debug the
+kernel while it is running. After installing the kernel debugger,
+you'll notice a program called "Global Flags" in the same program
+group. Run that first, and check flags like "Buffer DbgPrint Output"
+in each tabbed pane. Once you've done that, go ahead and open the
+debugger.</p>
+<p>First, let's set up the symbols in the debugger. From the File menu,
+select "Symbol Path." If you downloaded and installed the symbols into
+<tt>C:\Directory</tt>, you'll want to enter that path into the dialog box.
+If you'd like to have the Kernel Debugger download them from Microsoft 
+into C:\Directory as needed, enter
+<tt>SRV*C:\Directory*http://msdl.microsoft.com/download/symbols</tt> 
+ as your symbol path. Microsoft offers the use of the symbol server
+for free to one and all, and that server has symbols for most of its
+major operating systems. Click okay to leave the symbol path dialog box,
+and you're ready to debug! </p>
+<p>
+To open a crash dump, select "Open Crash Dump" from the File menu. It will
+create a new workspace where you may have to re-enter the symbol server
+information -- "the crash dump workspace." Save the symbol server
+preferences by saving the workspace, once you have the symbol path setup
+correctly. Check out <a href="debug1.txt">sample
+output</a> from a Kernel Memory Dump opened in WinDbg. I've also included
+the following screenshot of the output. Note the command prompt.
+</p>
+<a href="debug1.txt"><img border="0" alt="WinDbg analyzing a crash dump" src="images/windbg.gif"/></a>
+<p>In this instance, the debugger's automated analysis has decided the
+crash was probably caused by naiavf5x.sys, a kernel filter driver for some
+popular virus scanning software. Following the debugger's suggestion, we
+can type "!analyze -v" for a <a href="debug2.txt">detailed analysis</a>
+(see the output).
+<p>Yikes! It sounds like somewhere we had some corrupted memory in the
+kernel. This type of error could be caused by any number of hidden sources
+that accidentally touched memory they shouldn't have. Notice that the
+debugger will show you a stack of trace of what functions had stack
+entries (the call order) during the crash, along with other information
+like a more descriptive error code (BAD_POOL_HEADER) and the address of
+the memory violation.
+</p>
+<p>
+Some other useful commands for analyzing your crash dump are: 
+!drivers, !kdext*.locks, !memusage, !vm, !errlog, !process 0 0,
+and !process 0 7. Check out the section titled "Analyzing a Kernel-Mode
+Dump File with WinDbg" in the Debugger's help for even more commands.
+ The help files included with the Kernel Debugger also provide a huge
+resource of bugcheck codes, error code descriptions, and commands for
+analyzing all sorts of things. Note that you can attach the debugger
+to other things like executable images and live kernels, though that
+is probably out of the scope of this guide.</p>
+</body> </html>

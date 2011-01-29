@@ -1,0 +1,91 @@
+<html>
+<head>
+<title>Windows XP &amp; the Windows Driver Model - Background
+&amp; Architecture</title>
+</head>
+<body>
+<h1>Background/Architecture</h1>
+<p>To begin understanding and creating device drivers, one must first
+understand the architecture under which these device drivers will
+execute. The following diagram is a simplified overall view of the
+Windows XP Architecture relevant to Driver Development. It is very
+important to remember that many other Executive (read: XP Kernel)
+services are not shown in this diagram, but still may affect drivers.</p>
+<img alt="Windows XP Architecture relevant to Device Drivers" border="0" src="images/basic_arch.gif" usemap="#archmap" />
+<map name="archmap">
+  <area shape="rect" coords="55,0,550,124" href="#windowsapplications" alt="User Mode Processes" />
+  <area shape="rect" coords="55,355,522,430" href="#hal" alt="Hardware Abstraction Layer" />
+  <area shape="rect" coords="55,180,526,218" href="#dispatcher" alt="System Service Dispatcher" />
+  <area shape="rect" coords="348,278,462,341" href="#devdrv" alt="Device Drivers" />
+  <area shape="rect" coords="269,222,524,351" href="#iomanager" alt="I/O Manager" />
+  <area shape="rect" coords="60,224,260,348" href="#otherks" alt="Other Kernel Services" />
+  
+</map>
+<a name="windowsapplications"/>
+<h2>Windows Applications</h2>
+<p>Using the Win32 API (User Mode API), Applications make calls to the 
+Win32 Subsystem, which is a composed of a linked library that 'traps'
+into kernel mode. Next, the user mode API call is mapped into a System 
+Service Dispatcher function call; in the case of most device drivers,
+this means that the dispatcher calls an I/O Manager function. The I/O
+Manager creates and allocates space for a new I/O Request Packet
+(IRP) structure instance. This IRP is passed to the relevant device
+drivers; these drivers then use the hardware abstraction layer (HAL) calls
+to read bytes directly from the hardware.</p> 
+<a name="hal" />
+<h2>Hardware Abstraction Layer</h2>
+<p>Affectionately known as the HAL, this is a collection of
+subroutines that varies for different hardware configurations.
+Collectively, these routines present the same hardware access
+interface to the kernel and device drivers, effectively isolating
+the OS from platform-specific hardware differences.</p> 
+<a name="dispatcher"/>
+<h2>System Service Dispatcher</h2>
+<p>The system service dispatcher is in charge of handling interrupts,
+exceptions, and system service calls. Depending on the HAL, most platforms
+contain an instruction that causes a 'trap' that initiates a transition
+into Kernel mode. On Intel x86 Pentium II and later, this
+instruction is called 'sysenter,' and there two registers EAX (system call
+#) and EBX (pointer to parameter list) reserved for trapping into kernel
+mode. In order to actually handle these calls, the system also stores (at 
+boot) a function pointer to the dispatcher in a special register reserved for
+system calls. ( <a href="intspri.html">more on interrupts and windows
+scheduling related to drivers</a> )</p>
+<a name="iomanager" />
+<h2>The I/O System (and the I/O Manager)</h2>
+<p>The Windows XP I/O System is intended to manage hardware devices and
+provide access to them from Applications and the system itself. This
+system is packet driven: at its core are the I/O Request Packet (IRP) and  
+the I/O Manager. To complete I/O requests, these IRPs are passed around
+between different components of the I/O system until the request is
+complete (the rest of this guide will elaborate of much of the I/O system 
+).</p>
+<a name="devdrv" />
+<h2>Device Driver Architecture</h2>
+<p>
+Windows supports a wide variety of device-types and programming
+environments. Drivers fall into two major categories: User-Mode and
+Kernel-Mode. Printer drivers and virtual device drivers are two main types
+of user-mode drivers. This guide focuses on the other, probably larger,
+category of kernel-contained drivers. This second type is
+dynamically linked into the OS kernel itself. Kernel mode drivers are of
+many types, including but not limited to file system drivers, network
+device drivers, video adapater drivers, input device drivers, and
+"protocol" drivers.
+( <a href="ddarch.html">more on the device driver architecture</a> ) </p>
+<a name="otherks" />
+<h2>Other Kernel Services</h2> 
+<p>
+The Windows Kernel provides many other services to user-mode program
+programs as well as processes that promote the overall "health" of the
+system. These "services" include such things as File System caches, Object
+Manager, Security Reference Monitor, Virtual Memory, Process &amp; Thread
+Management and Scheduling, Configuration Manager (the Registry), Local
+Procedure Call facilty, and more.</p>
+<p>The Windows Kernel also has a ridiculously large number of supporting
+functions that also provide things such as Unicode string handling and
+synchronization objects. It may be appropriate here to note
+that non-plug and plug drivers in the above section may also provide extra
+kernel functionality in the form of services like the implementation of
+network protocols.</p>
+</body> </html>

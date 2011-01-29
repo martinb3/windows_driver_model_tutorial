@@ -1,0 +1,125 @@
+<html>
+<head>
+<title>Windows XP &amp; the Windows Driver Model - Driver Structure
+&amp; the I/O Request Packet</title>
+</head>
+<body>
+<h1>WDM Driver Structure</h1>
+<p>
+The DDK has a default build script, which you should use, which specifies
+the main entry point of your driver to the DriverEntry routine. Most
+people don't go through the hassle of changing the entry point so they can
+call their function(s) something other than the 'normal' names. You may
+use arbitrary function names for the rest of the functions in your driver,
+as you'll be filling a structure with pointers to them inside your
+DriverEntry routine -- however, keeping names simple like the ones below
+facilitates code reuse, and drivers contain a ton of boilerplate code.  
+</p> 
+<h3>Quick Overview, Graphically</h3>
+<img src="images/wdmfunc.gif" alt="Graphical grouping of driver subroutines"/>
+<h3>Driver functions and what they do for our WDM Filter Driver</h3>
+<p>While you may expect a blow-by-blow account of what each of
+the following routines should do, the best place for that is browsing the
+example filter drivers provided. You'll find that while these functions
+exist in most drivers, there isn't a one-size-fits-all specification of
+what a device-specific driver should do... or we wouldn't need device
+drivers at all. I have, however, provided a textual description of what
+each routine <b>should</b> do. Also, for each Add and Entry routine, there
+<b>is</b> a corresponding Remove and Unload routine, though these exit
+routines will not perform very much, if any, work for WDM drivers that
+(must) fit the Plug and Play requirements.
+ </p>
+<ol>
+<li>Basic Routines (These routines typically set up infrastructure
+required by WDM by modifying some <a href="structure.html">Driver-related
+Structures</a>)
+	<ol type="a">
+	<li><tt>NTSTATUS <strong><em>DriverEntry</em></strong> ( IN
+PDRIVER_OBJECT DriverObject, IN  PUNICODE_STRING RegistryPath );</tt>
+	<p>This function's main job is to fill in function pointers to all
+the other functions listed here. The most important pointer to set is 
+the <tt>DriverExtension->AddDevice</tt> pointer.  The array of
+pointers in <tt>DriverObject->MajorFunction[IRP_...]</tt> must also be
+set. These functions (via the pointers you set) will be called to handle
+various jobs as required by the I/O manager. This is also the place to
+store a pointer to the <tt>DriverUnload</tt> routine, the opposite of
+DriverEntry.
+	</p></li>
+	<li>
+        <tt>
+        NTSTATUS <strong><em>AddDevice</em></strong> (
+        IN PDRIVER_OBJECT   Driver,
+        IN PDEVICE_OBJECT   PDO
+        );
+        </tt>
+	<p>
+	Drivers are given a DriverObject (the FDO, or FiDO, which will
+designate this driver) and a DeviceObject (the PDO) as arguments to this
+routine. Here, Drivers must create a device object to represent the
+physical device they manage, initialize the device extension and fill in
+flags with device-specific values, and call
+<tt>IoAttachDeviceToDeviceStack</tt> to have the I/O Manager link the
+device object into the stack.
+	</p></li>
+        </ol></li>
+<li>I/O Control Routines (These routines typically create, complete,
+modify, or otherwise handle <a href="irp.html">I/O Request Packets</a>)
+	<ol type="a">
+	<li><tt>BOOLEAN <strong><em>OnInterrupt</em></strong> (
+IN PKINTERRUPT InterruptObject, IN PDEVICE_EXTENSION pdx );</tt> <p>Used
+for the fast handling of an interrupt (clear the interrupt and queue a dpc
+as fast as possible) when the device needs to notify the driver that some
+operation has completed or occurred. We won't use this for our
+filter driver, but it is important enough to be mentioned anyway.</p></li>
+	<li><tt>
+VOID <strong><em>DpcForIsr</em></strong> ( IN PKDPC Dpc, IN PDEVICE_OBJECT
+fdo, IN PIRP Irp, IN PDEVICE_EXTENSION pdx );
+</tt>
+<p>The function that probably completes the I/O
+request (packets) that were queued for completion during the ISR. 
+We won't see these in our filter driver either, since we won't
+be the driver primarily responsible for completing I/O requests.</p></li>
+	<li>There are other I/O routines for DMA Adapater control and IRP
+queuing, but they won't appear in WDM often and certainly won't appear in
+our samples.</li>
+	</ol></li>
+<li>Dispatch Routines (These routines typically create, complete,
+modify, or otherwise handle <a href="irp.html">I/O Request Packets</a>)
+	<ol type="a">
+	<li><tt>NTSTAUS <strong><em>DispatchPnp</em></strong> (
+IN PDEVICE_OBJECT fdo, IN PIRP Irp );</tt><p>Handles plug and play events
+that are usually sent from the PNP Manager to the driver. WDM Drivers are
+required to handle PNP events.</p></li>
+	<li><tt>NTSTAUS <strong><em>DispatchPower</em></strong> (
+IN PDEVICE_OBJECT fdo, IN PIRP Irp );</tt><p>Handles power manager queries
+and requests. WDM Drivers are required to handle these kinds of queries
+and requests.</p></li>
+	<li><tt>NTSTATUS <strong><em>DispatchWmi</em></strong> ( IN
+PDEVICE_OBJECT fido, IN PIRP Irp );</tt><p>Handles Windows Management
+Instrumentation actions that occur from a user that is using WMI to
+manage devices. We won't be focusing on this aspect of Drivers, as WMI
+is an entire other architecture for managing Windows systems.</p></li>
+	<li>DispatchRead &amp; DispatchWrite <p>These two
+routines are called when the driver/device is called upon to
+perform I/O. I've omitted the function prototypes because, as you 
+may have guessed from the list above, most dispatch routines have
+identical prototypes; one can even use a single generic dispatch
+routine for every dispatch need.</p></li>
+	</ol></li>
+</ol>
+<p>As this guide focuses on WDM filter drivers, most actual I/O, pnp, and
+power
+requests will simply be passed down to the device object below the current
+one, and forgotten about. WDM filter drivers will contain the bulk of
+their functionality in DriverEntry, AddDevice, DriverUnload, and IRP
+handling routines that catch returned-data passing up the stack towards
+the I/O requestor and modify it. </p> 
+<p>
+The sample annotated drivers should make a lot more sense after this
+section. In effect, they get in between the original callback mechanism
+used by XP's thread for polling for input data. This is probably a good
+time in the guild to explore the sample annotated drivers.
+</p>
+</body>
+</html>
+

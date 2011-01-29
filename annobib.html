@@ -1,0 +1,123 @@
+<html>
+<head>
+<title>Windows XP &amp; the Windows Driver Model - Annotated
+Bibliography</title>
+</head>
+<body>
+<h2>Windows XP &amp; the Windows Driver Model - Annotated
+Bibliography</h2>
+<ol>
+<li>Baker, Art, and Jerry Lozano. <u>The Windows 2000 Device Driver
+Book</u>. 2nd ed. New Jersey: Prentice Hall, 2001.
+<p>While this book may seem somewhat archaic (WDM content was added after
+the first edition), it covers many topics that are unmentioned in later
+and more comprehensive works that cover Windows driver development.
+Particularly, this book covers hardware &amp; buses (especially the USB),
+stress testing, and practical details of crash dump debugging. Some have
+also called this book a better version of the DDK, and I would consider it 
+a good book to start from. It offers perspective into pre-WDM drivers
+and a better focus on hardware, but has a limited scope such that isn't
+found other other texts.</p> </li>
+<li>Hart, Johnson M. <u>Win32 System Programming</u>. 2nd ed. Indiana:
+Addison-Wesley, 2001.
+<p>The text isn't directly related to driver development and the
+Windows Driver Model, but developers who are new to kernel-mode
+programming can make good use of a reference into the Win32 API.
+Furthermore, seeing
+how user-mode will call drivers is supremely useful in understanding the
+kernel behind the scenes. This book also has excellent coverage of general
+Windows issues such as Unicode support and security objects. As the author
+states, this book is written with a UNIX audience in mind and makes many
+equivalence comparisons between UNIX system calls and the Win32 API.
+For developers coming from a UNIX background, I would highly recommend
+this book before reading driver development books.</p></li>
+<li>Oney, Walter. <u>Programming the Microsoft Windows Driver Model</u>.
+2nd ed. Redmond: Microsoft Press, 2003.
+<p>While this book is the flagship of Microsoft Press's WDM coverage, I
+would not recommend it without some prior readings into the Windows Driver
+Model. The author does do an excellent job of highlighting some critical
+but confusing issues and offers precise solutions to these problems,
+though most casual or new users won't really understand these problems to 
+begin with. This book also has excellent coverage of how the WDM is
+implemented on the gamut of Windows platforms, and how to maintain
+compatibility between them. Lastly, this book has excellent coverage of
+filter drivers in the WDM and a great section on how to get hardware and
+drivers Windows-logo certified. </p> </li> 
+<li>Russinovich, Mark E., and David A. Solomon. <u>Microsoft Windows
+Internals: <i>Microsoft Windows Server 2003, Windows XP, and Windows
+2000</i></u>. 4th ed. Redmond: Microsoft Press, 2005.
+<p>Russinovich and Solomon are venerated leaders of the Windows line of
+operating systems and have created a rich documentation that brings order
+into what can often seem a very chaotic internal OS environment.
+This work is unparalleled in its concision and clarity of the
+latest Windows systems. This was the best reference I had for
+general OS internals that were related to driver development and
+provided a background for much of the material in WDM and Windows 
+Driver Development Books. The I/O system coverage is also superb.</p></li> 
+<li><u>Microsoft Developer's
+Network Library</u>. April 2005. Microsoft Corporation, Redmond.
+&lt;http://msdn.microsoft.com/library/&gt;
+<p>
+While somewhat unwieldly, the MSDN library is the best
+reference library for kernel mode programming. It is constantly
+updated, free to access online, and very accurate (sometimes so
+accurate that developers unsuccessfully attempt to prove it
+wrong). The best way to use this resource is through the search
+function, simply searching for Kernel APIs, data structures, and
+following links. Without this resource, either in it's online form, or on
+CD, driver development would be much more difficult. However, the 
+MSDN library can also be too big, and search results may yield
+the correct topic in the wrong OS, or worse.
+</p></li>
+<li><u>Windows Hardware and Driver Central</u>. September
+2005. Microsoft Corporation, 
+Redmond. &lt;http://www.microsoft.com/whdc/&gt;
+<p>
+WHDC is the best place to download resources and read articles about
+driver-related technologies; you'll also find information about WinHEC,
+the Windows Hardware conference, as well as the next-gen driver
+architecture for Windows, the Windows Driver Framework (WDF).
+This is also the site from which one can order the DDK or
+download debugging tools.</p></li>
+<li><u>Open Systems Resources</u>.
+September 2005. Amherst, New Hampshire. &lt;http://www.osronline.com/&gt;
+<p>Outside of Microsoft resources, OSR is the place for
+driver development articles, message boards, and IT training. It
+also provides some utilities, such as the driver loader, to help
+developers learn more about drivers. While the OSR site is
+somewhat confusing, and has some articles that require a
+subscription, it is a good place to browse and it often keeps up for the
+public an online version of the DDK in plain text.</p></li>
+<li><u>Windows Device Driver Development Kit</u>. Version 3790.1830.
+Microsoft Corporation, Redmond.
+<p>The DDK itself is not only an excellent resource, but is
+required to actually compile production drivers for the Windows
+family of operating systems. It comes complete with hypertext
+documentation and a large selection of examples which provide
+templates to start from when designing new drivers. The DDK contains
+helpful utilities for driver writers as well, specifically the driver
+verifier. It also provides build environments, at the time of this
+writing, for Windows 2000, Windows XP, and Windows Server 2003.</p></li>
+<li>Microsoft newsgroup
+&lt;microsoft.public.development.device.drivers&gt;, 2005.
+<p>The driver development newsgroup hosted by Microsoft is the best way to
+communicate with a large body of professionals, MVPs, and Microsoft
+employees when asking questions about driver development. This
+newsgroup is very active and has participants with a wide
+variety of skill levels with Windows Drivers. It is also the
+place to read about very nuanced issues that sometimes even the
+DDK doesn't explain fully or well. The biggest criticism of this
+newsgroup is that people often don't know the right question to
+ask of its expert participants, so read through some of its archives 
+before posting your own question.</p></li>
+<li>Usenet newsgroup &lt;comp.os.ms-windows.programmer.nt.kernel-mode&gt;,
+2005.
+<p>Similar to the Microsoft-sponsored newsgroup on device drivers, this
+its civillian cousin. Many questions and posters overlap between this and
+the Microsoft newsgroup, but you may find more freedom in this environment
+as well as more commercial developers. Be aware that this newsgroup also
+is much more public, and often contains irrelevant posts, spam, and
+ill-willed participants. It is best used as a last resort if you
+can't find information elsewhere.</p></li> </ol>
+</body>
+</html>

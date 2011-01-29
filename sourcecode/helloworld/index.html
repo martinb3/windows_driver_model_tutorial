@@ -1,0 +1,47 @@
+<html>
+<body>
+
+<h1>
+The Hello World Driver
+</h1>
+<p>This driver just prints debug messages. Don't forget to run the
+better <a
+href="http://www.sysinternals.com/Utilities/DebugView.html">DbgView</a>
+(from <a href="http://www.sysinternals.com/">sysinternals.com</a>)!</p>
+
+The files:
+<ol>
+<li><a href="hello.c">hello.c</a></li>
+<li><a href="makefile">makefile</a></li>
+<li><a href="sources">sources</a></li>
+</ol>
+<h2>What does it do</h2>
+<p>This example has NO functionality other than to be loaded and
+unloaded. When it is loaded and unloaded, it deposits a print
+statement into the kernel's debug print buffer. This example is best
+run by using the Win32 API or the utility mentioned below. Also run
+DbgView so that you can see the print statements in that Kernel 
+buffer.</p>
+<h2>How to build</h2> <p>
+After installing the DDK, open the build environment "Windows XP Free
+Build." Change to the directory with these files, then execute
+"build.exe." The build utility should be automatically in your path. 
+</p>
+
+<h2>How to Install</h2>
+<ol>
+<li>Create a usermode program that uses the API calls CreateService and
+StartService (see MSDN library).</li>
+<li>Use OSR's <a
+href="http://www.osronline.com/article.cfm?article=157">Driver
+Loader</a> Utility instead of writing your own</li>
+</ol>
+
+<h2>What is each file</h2>
+<ol>
+<li>makefile only points to the DDK's default build script</li>
+<li>sources contains a list of files to be included during compilation</li>
+<li>hello.c are the headers and code for the driver</li>
+</ol>
+ 
+</body> </html>

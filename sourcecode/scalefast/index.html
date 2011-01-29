@@ -1,0 +1,55 @@
+<html>
+<body>
+
+<h1>
+The Scale-Fast Driver
+</h1>
+The files:
+<ol>
+<li><a href="moufiltr.h">moufilter.h</a></li>
+<li><a href="moufiltr.c">moufilter.c</a></li>
+<li><a href="moufiltr.rc">moufilter.rc</a></li>
+<li><a href="makefile">makefile</a></li>
+<li><a href="sources">sources</a></li>
+<li><a href="kbdmou.h">kbdmou.h</a></li>
+</ol>
+<h2>What does it do</h2>
+<p>This driver scales X and Y coordinate values by 10 and prints debug
+messages. Don't forget to run the better <a
+href="http://www.sysinternals.com/Utilities/DebugView.html">DbgView</a>
+(from <a href="http://www.sysinternals.com/">sysinternals.com</a>)!
+</p>
+<h2>How to build</h2>
+<p>
+After installing the DDK, open the build environment "Windows XP Free
+Build." Change to the directory with these files, then execute
+"build.exe." The build utility should be automatically in your path. 
+</p>
+
+<h2>How to Install</h2>
+<ol>
+<li>Copy the .sys file generated from the build into the \System32\Drivers
+folder of the Windows XP Root</li>
+<li>Modify the HKLM\SYSTEM\CurrentControlSet\Services to introduce a new
+key named "MouFiltr". -- You probably already did this in previous
+examples.</li> 
+<li>Open 
+HKLM\System\CurrentControlSet\Control\Class\{4D36E96F-E325-11CE-BFC1-08002BE10318}
+and modify the value of "UpperFilters" to include "moufiltr" BEFORE
+mouclass. It should read "moufiltr\0mouclass\0\0" -- treat \0 as a
+newline in the registry editor. You probably already did this in a
+previous example.</li> </ol>
+
+<h2>What is each file</h2>
+<ol>
+<li>makefile only points to the DDK's default build scripts</li>
+<li>sources contains a list of files to be included during
+compilation</li>
+<li>kbdmou.h is from the ddk and includes useful structures and #defines
+used in the driver</li>
+<li>moufiltr.rc has information about the driver, it's filename,
+description, and version structure</li>
+<li>moufiltr.h and .c are the headers and code for the driver</li>
+</ol>
+ 
+</body> </html>

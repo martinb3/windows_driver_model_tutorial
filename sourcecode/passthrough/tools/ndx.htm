@@ -1,0 +1,28 @@
+<html>
+<body>
+
+<h1>
+Tools for Loading your Driver
+</h1>
+<p>This provides you, the user, some way to get the system to load
+your driver. You must (a) create a service entry for your driver and
+(b) specify that service name as an upper filter of the mouclass
+service.</p>
+
+The files:
+<ol>
+<li><a href="RegisterDriverService.cpp">RegisterDriverService.cpp</a></li>
+<li><a href="MouFiltrServiceDescription.reg">MouFiltrServiceDescription.reg</a></li>
+<li><a href="rds.exe">rds.exe</a></li>
+<li>Use RegEdit to edit the registry, and Visual Studio to compile the
+executable.</li>
+</ol>
+<h2>What does it do</h2>
+<p>
+Both the .reg file and executable add a new service entry called
+"moufiltr." Even if you use one of these files, you must still open
+HKLM\System\CurrentControlSet\Control\Class\{4D36E96F-E325-11CE-BFC1-08002BE10318}
+and modify the value of "UpperFilters" to include "moufiltr" BEFORE
+mouclass. It should read "moufiltr\0mouclass\0\0" -- treat \0 as a newline
+in the registry editor. </p> 
+</body> </html>

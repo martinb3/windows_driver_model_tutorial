@@ -1,0 +1,104 @@
+<html>
+<head>
+<title>Windows XP &amp; the Windows Driver Model - Loading Drivers &amp; the Registry</title>
+</head>
+<body>
+<h1>Loading Drivers &amp; the Registry</h1>
+<h2>What does the registry do?</h2>
+<p>Most generally, the Windows registry is where the operating system stores most setting/state
+information as well as where it provides a Window to the kernel (not unlike NFS's /proc). The
+Plug and Play Manager, the Shell, and Setup APIs/programs all rely heavily on the registry for
+everything from booting the machine to determining file types. While not covered here, the
+techniques used to maintain the registry are quite elegant and not unlike a simplified relational
+database. The registry is also a major player in the game of how device drivers get loaded by the
+system, and that is where we focus our attention in this guide. To edit or view the registry as
+you follow along, run the RegEdit.exe program from Start -> Run. The keys described here are all
+children of the <em>HKEY_LOCAL_MACHINE</em> branch of the tree.</p> 
+<h2>A Visual Representation of relevant Keys</h2>
+<img alt="" src="images/regkeys.gif"/>
+<h2>Hardware (Instance) Key</h2>
+<p><em>\System\CurrentControlSet\Enum</em></p>
+<p>This key contains subkeys for all of the 'enumerable' buses in the system. You'll find that each
+enumerable device's hardware key is a subkey of the bus's key that it belongs to. Drilling down
+further, each hardware ID also has subkeys containing hardware instance keys for each instance of
+that device. This structure of hardware keys stores a lot of details about the device (the Device
+Manager in User Mode gets its information directly from this key) including the manufacterer, a
+friendly name, resource requirements, and the device's class key. This section can also be
+directly accessed by user mode programs and WDM drivers.</p>
+<h2>Class Key and Our Filter Example</h2>
+<p><em>\System\CurrentControlSet\Control\Class</em></p>
+<p>This section is pointed to by the hardware key for each device. Information found in this
+subkey applies to all devices within a class, which is identified by a Class ID. The one that
+applies here to us is the one for pointing devices, which is represented textually as
+{4D36E96F-E325-11CE-BFC1-08002BE10318}. These keys for each device class contain other
+information as well, such as what filter drivers should be loaded for all devices in this class.
+We'll be using this key to add our filter driver for all mice. This location was chosen so that
+anyone using this guide could filter their mouse device without having to scout around for the
+device key for their specific mouse.</p>
+<p>
+It is necessary to mention that the key
+<em>\System\CurrentControlSet\Control\Class\{4D36E96F-E325-11CE-BFC1-08002BE10318}</em> contains an
+entry called UpperFilters, of type REG_SZ_MULTI. This is one of two entries we'll be modifying to
+load our device. The syntax of the REG_SZ_MULTI data type is tricky depending on where you are (in a
+user mode program or the registry). For our purposes, you may simply put a newline between subsequent
+driver service names in the list, and an extra newline at the end. If you're loading one of the
+filter drivers provided in this example, you'll want upperfilters to read: "moufiltr \newline
+mouclass \newline \newline" where \newline is exactly one new line. Make sure moufiltr is listed
+before mouclass, or the driver won't be in the correct position in the stack! </p>
+<h2>Driver Key &amp; Serice Key</h2>
+<p><em>\System\CurrentControlSet\Control\Class\{class id}\001...\...</em></p>
+<p>To be more specific, each device has a numbered key below the class key mentioned above. Most
+of the device-specific information below the class key is simply information about how to find a
+driver or INF file for installation and setup purposes. We won't be modifying it at all, though
+you may be interested in browsing it on your own system.</p> 
+<p><em>\System\CurrentControlSet\Services</em><p>
+<p>The service key is the second important location that you'll need to add to or modify to load
+our driver examples. This key has subkeys that 'name' each driver (a driver is considered a
+service by the service control manager, but not in the typical sense of 'NT service') and govern
+how it is loaded. Each named subkey of the services key corresponds to the name in the
+UpperFilter's entry in the class key, and each service subkey for a driver contains information
+like the location of the .sys file on disk and parameters that affect the order in which the
+driver is loaded. We'll be adding a subkey of services called moufiltr for our examples, but
+there's often a simpler way to do this, which I'll mention in the next section.</p>
+<h2>Service Control Manager</h2>
+<p>Plainly stated, the SCM is in charge of that services subkey mentioned above. To modify anything
+therein, I recommend calling on the SCM to modify everything for you. I've included a simple Win32
+User Mode program for you to use that will add a given service to the service key by way of the SCM.
+My advice would be to trust the SCM, as it knows more about it's registry keys than we do. The sample
+code is called RegisterDriverService.cpp and you'll find it among the annotated drivers. If you
+really, really want to add the service subkey for our driver examples by hand, you'll need to use
+MSDN to look up what entries are required (there are a ton!). The relevant settings we'll use for our
+service include, at a minimum, the following (given in the format of the arguments to call the SCM,
+as in MSDN):
+<blockquote><pre>
+	lpDisplayName = L"DriverServiceName";
+	dwDesiredAccess = SC_MANAGER_CREATE_SERVICE;
+	dwServiceType = SERVICE_KERNEL_DRIVER;
+	dwStartType = SERVICE_SYSTEM_START;
+	dwErrorControl = SERVICE_ERROR_NORMAL;
+	lpBinaryPathName = L"\System32\Drivers\filename.sys";
+	lpLoadOrderGroup = NULL;
+	lpdwTagId = NULL;
+	lpDependencies = NULL;
+	lpServiceStartName = NULL;
+	lpPassword = NULL;
+</pre></blockquote>
+</p> 
+<h2>LastKnownGood and Finishing Up</h2> 
+<p>Armed with the above information, you're ready to load sample
+drivers into a system! The examples themselves often include .reg
+files or some usermode utility's sourcecode for loading the driver. If 
+we didn't need to load our examples into a stack with the mice-related 
+drivers, we'd probably just load the driver using Win32 APIs.</p>
+<p>What happens if you have a driver that crashes the system and it
+gets loaded when the system is booted? Don't dismay -- the system
+copies everything below <tt>\System\CurrentControlSet</tt> into a
+backup controlset after each successful boot (boot + user login).
+Don't modify the other control sets under \System, because they may
+save you if need to recover your driver configuration after adding a
+bad driver into the load order. You can probably bet that the current
+contol set is really just a symlink to ControlSetXXX. To restore your
+system to a 'working' driver set, hit F8 as the boot sequence starts,
+and choose "Last Known Good..." from the list -- that will restore you 
+to a working control set.</p> 
+</body> </html>

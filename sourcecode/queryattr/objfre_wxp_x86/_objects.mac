@@ -1,0 +1,28 @@
+MUI_386_OBJECTS= \
+    $(_OBJ_DIR)\i386\moufiltr.res
+
+386_OBJECTS= \
+    $(_OBJ_DIR)\i386\moufiltr.res \
+    $(_OBJ_DIR)\i386\moufiltr.obj
+
+MUI_IA64_OBJECTS= \
+    $(_OBJ_DIR)\ia64\moufiltr.res
+
+IA64_OBJECTS= \
+    $(_OBJ_DIR)\ia64\moufiltr.res \
+    $(_OBJ_DIR)\ia64\moufiltr.obj
+
+MUI_AMD64_OBJECTS= \
+    $(_OBJ_DIR)\amd64\moufiltr.res
+
+AMD64_OBJECTS= \
+    $(_OBJ_DIR)\amd64\moufiltr.res \
+    $(_OBJ_DIR)\amd64\moufiltr.obj
+
+MUI_ARM_OBJECTS= \
+    $(_OBJ_DIR)\arm\moufiltr.res
+
+ARM_OBJECTS= \
+    $(_OBJ_DIR)\arm\moufiltr.res \
+    $(_OBJ_DIR)\arm\moufiltr.obj
+

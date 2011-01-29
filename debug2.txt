@@ -1,0 +1,89 @@
+kd> !analyze -v
+*******************************************************************************
+*
+*
+*                        Bugcheck Analysis
+*
+*
+*
+*******************************************************************************
+
+BAD_POOL_HEADER (19)
+The pool is already corrupt at the time of the current request.
+This may or may not be due to the caller.
+The internal pool links must be walked to figure out a possible cause of
+the problem, and then special pool applied to the suspect tags or the
+driver verifier to a suspect driver.
+Arguments:
+Arg1: 00000020, a pool block header size is corrupt.
+Arg2: 86604a08, The pool entry we were looking for within the page.
+Arg3: 86605228, The next pool entry.
+Arg4: 0b040014, (reserved)
+
+Debugging Details:
+------------------
+
+
+BUGCHECK_STR:  0x19_20
+
+POOL_ADDRESS:  86604a08 Nonpaged pool
+
+DEFAULT_BUCKET_ID:  DRIVER_FAULT
+
+LAST_CONTROL_TRANSFER:  from 8054b741 to 8053331e
+
+STACK_TEXT:  
+f78e6910 8054b741 00000019 00000020 86604a08 nt!KeBugCheckEx+0x1b
+f78e6960 804f2e00 86604a10 00000000 00000000 nt!ExFreePoolWithTag+0x2be
+f78e6978 f72e56a2 866f9c28 f78e69d4 f78e69ac nt!ExDeleteResourceLite+0x40
+f78e6988 f7312517 866f9c28 87386260 e11760d0 Ntfs!NtfsFreeEresource+0x6b
+f78e69ac f72e557a 86272598 f78e69d4 f78e69df Ntfs!NtfsDeleteFcb+0x67
+f78e69f8 f7306d00 86272598 87386100 e1293cc8 Ntfs!NtfsTeardownFromLcb+0x1fd
+f78e6a50 f72e1759 86272598 e1293d90 00000000 Ntfs!NtfsTeardownStructures+0x125
+f78e6a7c f73046eb 86272598 01293d90 00000000 Ntfs!NtfsDecrementCloseCounts+0x9e
+f78e6b00 f730448a 86272598 e1293d90 e1293cc8 Ntfs!NtfsCommonClose+0x397
+f78e6ba0 804e37f7 87386020 85e83008 8738ef38 Ntfs!NtfsFsdClose+0x21f
+f78e6bb0 f7383459 f78e6bf4 804e37f7 872fabc8 nt!IopfCallDriver+0x31
+f78e6bb8 804e37f7 872fabc8 85e83008 85e831e0 sr!SrPassThrough+0x31
+f78e6bc8 b8590d4e 85e83008 8654c9f0 85f181d8 nt!IopfCallDriver+0x31
+WARNING: Stack unwind information not available. Following frames may be wrong.
+f78e6bf4 b8596ea9 85e83008 f78e6c24 85e83018 naiavf5x+0x1d4e
+f78e6c30 b8591800 85f181d8 85e83018 87316610 naiavf5x+0x7ea9
+f78e6c44 804e37f7 86554858 85e83008 85e83008 naiavf5x+0x2800
+f78e6c54 8056a701 85f181c0 00000000 00000000 nt!IopfCallDriver+0x31
+f78e6c8c 805638f7 00f181d8 85f181c0 00000000 nt!IopDeleteFile+0x132
+f78e6ca8 804e36d5 85f181d8 00000000 862a584c nt!ObpRemoveObjectRoutine+0xdf
+f78e6ccc 804f412b 806ee298 862a57e8 806ee2d0 nt!ObfDereferenceObject+0x5f
+f78e6cf4 804ed22f 00000001 80556610 85e571e8 nt!CcDeleteSharedCacheMap+0xc7
+f78e6d2c 804e4f1d 873c21e0 80561440 873c58b8 nt!CcWriteBehind+0x316
+f78e6d74 804e426b 873c21e0 00000000 873c58b8 nt!CcWorkerThread+0x126
+f78e6dac 8057be15 873c21e0 00000000 00000000 nt!ExpWorkerThread+0x100
+f78e6ddc 804fa4da 804e4196 00000000 00000000 nt!PspSystemThreadStartup+0x34
+00000000 00000000 00000000 00000000 00000000 nt!KiThreadStartup+0x16
+
+
+FOLLOWUP_IP: 
+naiavf5x+1d4e
+b8590d4e 8bf0             mov     esi,eax
+
+SYMBOL_STACK_INDEX:  d
+
+FOLLOWUP_NAME:  MachineOwner
+
+SYMBOL_NAME:  naiavf5x+1d4e
+
+MODULE_NAME:  naiavf5x
+
+IMAGE_NAME:  naiavf5x.sys
+
+DEBUG_FLR_IMAGE_TIMESTAMP:  4125e3c1
+
+STACK_COMMAND:  kb
+
+FAILURE_BUCKET_ID:  0x19_20_naiavf5x+1d4e
+
+BUCKET_ID:  0x19_20_naiavf5x+1d4e
+
+Followup: MachineOwner
+---------
+

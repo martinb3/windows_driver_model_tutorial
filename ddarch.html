@@ -1,0 +1,119 @@
+<html>
+<head>
+<title>Windows XP &amp; the Windows Driver Model - Device Driver
+Architecture</title>
+</head>
+<body>
+<h1>Device Driver Architecture</h1>
+<img src="images/ddh.gif" border="0" usemap="#ddhmap" alt="Device Driver Types and Architecture"/>
+<map name="ddhmap">
+  <area shape="rect" coords="439,4,673,71" href="#usermodedrivers"
+alt="User Mode Drivers" />
+  <area shape="rect" coords="258,3,400,60" href="#kernelmodedrivers"
+alt="Kernel Mode Drivers" />
+  <area shape="rect" coords="74,132,222,187" href="#filesystemdrivers"
+alt="File System Drivers" />
+  <area shape="rect" coords="258,135,404,185" href="#plugandplaydrivers"
+alt="Plug and Play Drivers" />
+  <area shape="rect" coords="257,254,401,311" href="#windowsdrivermodel"
+alt="Windows Driver Model" />
+  <area shape="rect" coords="" href="#busdrivers" alt="Bus Drivers" />
+  <area shape="rect" coords="349,374,507,429" href="#functiondrivers"
+alt="Function Drivers" />
+  <area shape="rect" coords="539,375,685,431" href="#filterdrivers"
+alt="Filter Drivers" />
+  <area shape="rect" coords="0,377,329,428" href="#classportminiportdrivers" alt="Class, Port, Miniport Drivers" />
+  <area shape="rect" coords="439,133,586,186"
+href="#nonplugandplaydrivers" alt="Non-Plug and Play Drivers" />
+</map>
+<a name="usermodedrivers"/>
+<h2>User Mode Drivers</h2>
+<p>User-mode "drivers" mostly open hardware through a kernel-mode
+driver, often providing some service to user mode programs that is
+then translated into a call into a kernel mode driver. The most common 
+example of this is a printer driver that translates device-independent
+calls into device-specific ones. Another example is a driver that
+simple provides a callable interface in order to virtualize direct
+hardware access from older DOS mode programs that were written
+expecting direct hardware access.</p> 
+<a name="kernelmodedrivers"/>
+<h2>Kernel Mode Drivers</h2>
+<a name="filesystemdrivers"/>
+<h3>File System Drivers</h3> 
+File System drivers typically re-queue and issue reads and writes to
+another driver (such as a network or mass-storage device). This type of
+driver often provides a translation from filename to physical location as
+well.
+</p>
+<a name="plugandplaydrivers"/>
+<h3>Plug and Play Drivers</h3>
+<p>
+Plug and Plug drivers are device drivers in the most classical sense of
+the word -- they drive everything from video adapaters to mass storage
+devices. They integrate with the Power Manager and the Plug and Plug (PnP)
+Manager to provide the best possible user experience during installation
+and usage. Typically, Plug and Play is synonymous with the Windows
+Driver Model.</p> 
+<a name="windowsdrivermodel"/>
+<h4>Windows Driver Model (WDM)</h4>
+<p>The Windows Driver Model (WDM) is the primary focus of this guide. The
+WDM is a strongly-recommended way to create device drivers that will work
+with 98/Me, 2000, and XP. It is supported through a framework provided by
+the XP Kernel (often called the Executive). WDM Drivers are
+implemented using a layered approach where each driver implements 
+a layer that I/O requests and results must pass through on the
+journey from user-mode to physical hardware. Microsoft provides many
+facilities for driving devices under the WDM, and makes it difficult to 
+successfully drive devices without the WDM. WDM drivers typically fall 
+into three categories.</p>
+<a name="busdrivers"/>
+<h5>Bus drivers</h5>
+<p>
+Bus drivers detect and manage devices on a physical bus plugged into the
+system. Typical buses include PCI, ISA, PCMIA, USB, and IEEE 1294
+(Firewire). The primary role of a bus driver is to enumerate devices 
+plugged in to the bus and inform the PnP Manager of their existence. It
+also typically manages power settings of the devices and the bus itself
+through the Power Manager.</p>
+<a name="functiondrivers"/>
+<h5>Function drivers</h5>
+<p>
+Function drivers handle the operation of a particular device or type of
+device. A device is presented to the function driver from a bus driver via
+the PnP Manager. Function drivers typically know the most about the device
+they control and bear the closest resemblance to a non-layer
+monolithic device driver.</p> 
+<a name="filterdrivers"/>
+<h5>Filter drivers</h5>
+<p>Filter drivers exist above or below function drivers. They filter
+information flowing from the function driver to the bus driver, and
+vice-versa. The I/O Subsystem of Windows XP is packet based, and filter
+drivers typically manipulate those packets as well as deleting and
+creating packets. For filtering input device drivers, filter drivers
+typically intercept the hooking mechanism in a plug and play IRP and
+install their own dispatch callback function.
+</p> 
+<a name="classportminiportdrivers"/>
+<h3>Class, Port, and Miniport Drivers</h3> <p>
+There is one other classification of WDM drivers, in which three
+categories exist. Class Drivers are function drivers for devices that have
+a standardized interface, for which one driver can operate devices from a
+variety of manufacturers. Port drivers map I/O requests into a specific
+kind of port, such as RS232 or SCSI. Port drivers are typically a
+kernel-mode library that creates port-specific I/O requests from generic
+ones. Finally, Miniport drivers continue mapping where a Port driver
+leaves off -- miniport drivers take a port-type-specific I/O request and
+actually drive a device. Miniport drivers know things that are device
+specific such as which location on a serial interface handles a specific
+function of a device. It may be helpful to consider that a Port Driver + a
+Miniport Driver sum, in functionality, to a Function Driver.
+</p> 
+<a name="nonplugandplaydrivers"/>
+<h3>Non-Plug and Play Drivers</h3>
+<p>
+Non-Plug and Play drivers are sometimes also referred to as
+Kernel-extensions. These often provide a new API to user-mode components
+to get a novel functionality out of kernel-mode services. These extensions
+add everything from encryption to new network protocol APIs. </p> 
+</body>
+</html>
